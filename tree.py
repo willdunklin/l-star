@@ -14,12 +14,6 @@ class Tree:
         if self.is_leaf():
             return [(path, self)]
 
-        # is this necessary bc of structure?
-        # if self.left == None:
-        #     return self.right.get_leaves(1)
-        # if self.right == None:
-        #     return self.left.get_leaves(0)
-
         return self.left.get_leaves(path + [0]) + self.right.get_leaves(path + [1])
 
     def find_leaf(self, s: str) -> list:
