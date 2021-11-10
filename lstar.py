@@ -10,7 +10,6 @@ def lstar(o: oracle) -> DFA:
 
     M = DFA(
         Q=[''],
-        S=alphabet,
         delta={
             ('', '0'): '',
             ('', '1'): '',
@@ -70,7 +69,6 @@ def make_dfa(T: Tree, o: oracle) -> DFA:
     
     return DFA(
         Q=Q,
-        S=alphabet,
         delta=delta,
         start='',
         F=F
@@ -146,7 +144,6 @@ if __name__ == '__main__':
     o = oracle(
         DFA(
             Q=['a', 'b', 'c'],
-            S=alphabet,
             delta={
                 ('a', '0'): 'a',
                 ('a', '1'): 'b',
@@ -154,8 +151,8 @@ if __name__ == '__main__':
                 ('b', '0'): 'c',
                 ('b', '1'): 'a',
 
-                ('c', '0'): 'c',
-                ('c', '1'): 'b',
+                ('c', '0'): 'b',
+                ('c', '1'): 'c',
             },
             start='a',
             F=['b']

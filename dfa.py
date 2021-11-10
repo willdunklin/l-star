@@ -1,9 +1,9 @@
 import re
 remove_brackets = re.compile(r'\[(.*?)\]')
-# DFA M = (set of states Q, alphabet SIGMA, transition function delta, start state s_0, accept states F)
 
+# DFA M = (set of states Q, alphabet SIGMA, transition function delta, start state s_0, accept states F)
 class DFA:
-    def __init__(self, Q: list, S: list, delta: dict, start: str, F: list) -> None:
+    def __init__(self, Q: list, delta: dict, start: str, F: list, S: list=['0','1']) -> None:
         # initialize variables
         self.Q: list = Q # set of states
         self.S: list = S # alphabet
@@ -15,6 +15,13 @@ class DFA:
 
         # check that DFA is legal
         self.semantic_check()
+
+    def invert(self):
+        # result
+        R = self
+        # invert accepting/rejecting
+        R.F = [s for s in self.Q if s not in self.F]
+        return R
 
     # consume character and update current state via delta
     def move(self, char: str) -> bool:

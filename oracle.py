@@ -1,6 +1,7 @@
-from dfa import DFA, pretty
+from dfa import DFA
 from typing import Tuple
 from os import system, name
+from equiv import equivalence
 
 class oracle:
     def __init__(self, M: DFA) -> None:
@@ -22,6 +23,7 @@ class oracle:
 
     # equivalence query
     def eq(self, M_hat: DFA) -> Tuple[int, str]:
+        # test for functional equivalence by hand (oops)
         print('are these DFAs equivalent?')
         print('M_hat')
         M_hat.print()
