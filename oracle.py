@@ -22,21 +22,25 @@ class oracle:
         # return res
 
     # equivalence query
-    def eq(self, M_hat: DFA) -> Tuple[int, str]:
+    def eq(self, M_hat: DFA) -> Tuple[bool, str]:
+        res = equivalence(self.M, M_hat)
+        return res == None, res
         # test for functional equivalence by hand (oops)
-        print('are these DFAs equivalent?')
-        print('M_hat')
-        M_hat.print()
-        print()
+        # print('are these DFAs equivalent?')
+        # print('M_hat')
+        # M_hat.print()
+        # print()
 
-        print('M')
-        self.M.print()
-        print()
+        # print('M')
+        # self.M.print()
+        # print()
 
-        if int(input('0 no, 1 yes:')) == 1:
-            system(self.clear)
-            return 1, None
-        else:
-            x = input('provide counterexample string:')
-            system(self.clear)
-            return 0, x
+        # print()
+
+        # if int(input('0 no, 1 yes:')) == 1:
+        #     system(self.clear)
+        #     return 1, None
+        # else:
+        #     x = input('provide counterexample string:')
+        #     system(self.clear)
+        #     return 0, x

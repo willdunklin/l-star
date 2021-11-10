@@ -29,6 +29,7 @@ class Tree:
         return []
 
     
+    # finds the least common ancestor of two leaf nodes in the tree
     def closest_ancestor(self, s1: str, s2: str, path: list = []) -> Tuple[str, list]:
         if self.is_leaf():
             # if leaf is s1: set left bit, if s2: set right bit

@@ -5,8 +5,8 @@ from dfa import DFA
 # M_star = DFA()
 alphabet = ['0', '1']
 
-def lstar(o: oracle) -> DFA:
-    b = o.mq('')
+def lstar(ocl: oracle) -> DFA:
+    b = ocl.mq('')
 
     M = DFA(
         Q=[''],
@@ -18,9 +18,9 @@ def lstar(o: oracle) -> DFA:
         F=[] if b == 0 else ['']
     )
 
-    done, x = o.eq(M)
+    done, x = ocl.eq(M)
     # if done, halt
-    if done == 1:
+    if done:
         return M
     
     T = Tree('')
@@ -33,19 +33,19 @@ def lstar(o: oracle) -> DFA:
         T.left = Tree(x)
         T.right = Tree('')
 
-    # loop infinite (bounded for now)
-    for _ in range(10):
-        M = make_dfa(T, o)
+
+    while True:
+        M = make_dfa(T, ocl)
         
-        done, x = o.eq(M)
+        done, x = ocl.eq(M)
         # if done, halt
-        if done == 1:
+        if done:
             return M
 
-        T = update_tree(x, T, M, o)
+        T = update_tree(x, T, M, ocl)
 
 
-def make_dfa(T: Tree, o: oracle) -> DFA:
+def make_dfa(T: Tree, ocl: oracle) -> DFA:
     Q = []
     delta = {}
     F = []
@@ -58,13 +58,13 @@ def make_dfa(T: Tree, o: oracle) -> DFA:
             Q.append(s)
 
         # if the leaf is a right child, add to accepting
-        if o.mq(s) and not s in F:
+        if ocl.mq(s) and not s in F:
             F.append(s)
         
         # add state to transition table
         for c in alphabet:
             # find destination through shift of s.c
-            d = sift(s+c, T, o).string
+            d = sift(s+c, T, ocl)
             delta[(s, c)] = d # add rule
     
     return DFA(
@@ -75,7 +75,7 @@ def make_dfa(T: Tree, o: oracle) -> DFA:
     )
     
 
-def sift(s: str, T: Tree, o: oracle) -> Tree:
+def sift(s: str, T: Tree, ocl: oracle) -> str:
     # start with curr at root node
     curr = T
 
@@ -85,24 +85,24 @@ def sift(s: str, T: Tree, o: oracle) -> Tree:
         d = curr.string
         
         # if s.d is accepted, traverse right
-        if o.mq(s + d):
+        if ocl.mq(s + d):
             curr = curr.right
         # otherwise traverse left
         else:
             curr = curr.left
 
     # return the leaf node
-    return curr
+    return curr.string
 
 
-def update_tree(x: str, T: Tree, M: DFA, o: oracle) -> Tree:
+def update_tree(x: str, T: Tree, M: DFA, ocl: oracle) -> Tree:
     state = ''
     state_hat = ''
     j = 0
     
     for i in range(len(x) + 1):
         prefix = x[:i]
-        state = sift(prefix, T, o).string
+        state = sift(prefix, T, ocl)
         state_hat = M.move_string(prefix)
 
         if state != state_hat:
@@ -128,40 +128,45 @@ def update_tree(x: str, T: Tree, M: DFA, o: oracle) -> Tree:
     # create new node
     T.string = x[j-1] + d
     # add the following as its 2 children 
-    # the order is dependent on the side the node we just moved is
-    if path[-1] == 0:
-        T.left = Tree(prev)
-        T.right = Tree(x[:j-1])
-    else:
+    # the order is dependent on the membership of the string concat their distinguishing string
+    if ocl.mq(prev + T.string):
         T.left = Tree(x[:j-1])
         T.right = Tree(prev)
+    else:
+        T.left = Tree(prev)
+        T.right = Tree(x[:j-1])
     
     # return the full tree (post-op)
     return T_prime
 
 
 if __name__ == '__main__':
-    o = oracle(
+    ocl = oracle(
         DFA(
-            Q=['a', 'b', 'c'],
+            Q=['', '1', '0', '01'],
             delta={
-                ('a', '0'): 'a',
-                ('a', '1'): 'b',
+                ('', '0'): '0',
+                ('', '1'): '1',
 
-                ('b', '0'): 'c',
-                ('b', '1'): 'a',
+                ('0', '0'): '',
+                ('0', '1'): '01',
 
-                ('c', '0'): 'b',
-                ('c', '1'): 'c',
+                ('1', '0'): '01',
+                ('1', '1'): '',
+
+                ('01', '0'): '1',
+                ('01', '1'): '0',
             },
-            start='a',
-            F=['b']
+            start='',
+            F=['']
         )
     )
-    M = lstar(o)
+    M = lstar(ocl)
     print()
     print('Completed DFA via Lstar:')
     M.print()
+    print('from:')
+    ocl.M.print()
     # T = Tree('', left=Tree('0', left=Tree(''), right=Tree('10')), right=Tree('1'))
     # M = make_dfa(T, o)
     # M.print()
